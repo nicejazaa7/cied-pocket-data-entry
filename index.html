@@ -38,19 +38,21 @@
     <div id="status" class="mb-3 text-primary"></div>
 
     <!-- Form -->
-    <form id="dataForm">
+    <form id="dataForm" onsubmit="return false;">
       <div class="row">
         <div class="col-md-6">
-          <h5>Patient & Procedure</h5>
+          <h5>Patient &amp; Procedure</h5>
           <div class="mb-2">
-            <label class="form-label required" for="patient_code">Patient code (your ID)</label>
+            <label class="form-label required" for="patient_code">Patient code</label>
             <input type="text" id="patient_code" class="form-control" required />
-            <div class="form-text">Do not use HN. Use your own internal ID (e.g. ACS001).</div>
           </div>
 
           <div class="mb-2">
-            <label class="form-label" for="op_date">Operation date</label>
-            <input type="date" id="op_date" class="form-control" />
+            <label class="form-label" for="op_date">Operation date (DD/MM/YYYY)</label>
+            <input type="text" id="op_date" class="form-control" placeholder="DD/MM/YYYY" />
+            <div class="form-text">
+              If year &ge; 2200, it will be automatically converted from B.E. to A.D. (minus 543).
+            </div>
           </div>
 
           <div class="mb-2">
@@ -64,7 +66,8 @@
 
           <div class="mb-2">
             <label class="form-label" for="age">Age (years)</label>
-            <input type="number" id="age" class="form-control" min="18" max="120" />
+            <input type="number" id="age" class="form-control" min="15" max="110" />
+            <div class="form-text">Only 15–110 allowed.</div>
           </div>
 
           <div class="mb-2">
@@ -77,8 +80,23 @@
           </div>
 
           <div class="mb-2">
-            <label class="form-label" for="bmi">BMI</label>
-            <input type="number" step="0.1" id="bmi" class="form-control" />
+            <label class="form-label" for="weight">Weight (kg)</label>
+            <input type="number" step="0.1" id="weight" class="form-control" />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="height">Height (cm)</label>
+            <input type="number" step="0.1" id="height" class="form-control" />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="bmi">BMI (kg/m², auto)</label>
+            <input type="number" step="0.1" id="bmi" class="form-control" readonly />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="lvef">LVEF (%)</label>
+            <input type="number" id="lvef" class="form-control" min="1" max="99" />
           </div>
 
           <div class="mb-2">
@@ -87,9 +105,13 @@
               <input class="form-check-input" type="checkbox" id="dm" />
               <label class="form-check-label" for="dm">Diabetes</label>
             </div>
+            <div class="ms-3 mb-2" id="a1c_container" style="display:none;">
+              <label class="form-label" for="hba1c">HbA1c (%)</label>
+              <input type="number" step="0.1" id="hba1c" class="form-control" min="1" max="20" />
+            </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="ckd_esrd" />
-              <label class="form-check-label" for="ckd_esrd">CKD/ESRD</label>
+              <input class="form-check-input" type="checkbox" id="rrt" />
+              <label class="form-check-label" for="rrt">RRT (dialysis)</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="cad" />
@@ -98,6 +120,14 @@
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="hf" />
               <label class="form-check-label" for="hf">Heart failure</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="af" />
+              <label class="form-check-label" for="af">Atrial fibrillation</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="cld" />
+              <label class="form-check-label" for="cld">Chronic liver disease</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="malignancy" />
@@ -111,7 +141,7 @@
         </div>
 
         <div class="col-md-6">
-          <h5>Antithrombotic & Procedure</h5>
+          <h5>Antithrombotic &amp; Procedure</h5>
 
           <div class="mb-2">
             <label class="form-label" for="anticoagulant_type">Anticoagulant</label>
@@ -129,12 +159,23 @@
           </div>
 
           <div class="mb-2">
-            <label class="form-label" for="antiplatelet_regimen">Antiplatelet regimen</label>
-            <select id="antiplatelet_regimen" class="form-select">
-              <option value="None">None</option>
-              <option value="SAPT">SAPT</option>
-              <option value="DAPT">DAPT</option>
-            </select>
+            <label class="form-label">Antiplatelet agents (tick all that apply)</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="ap_asa" />
+              <label class="form-check-label" for="ap_asa">ASA</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="ap_clopidogrel" />
+              <label class="form-check-label" for="ap_clopidogrel">Clopidogrel</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="ap_ticagrelor" />
+              <label class="form-check-label" for="ap_ticagrelor">Ticagrelor</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="ap_prasugrel" />
+              <label class="form-check-label" for="ap_prasugrel">Prasugrel</label>
+            </div>
           </div>
 
           <div class="mb-2">
@@ -155,7 +196,7 @@
             </select>
           </div>
 
-          <h5 class="mt-3">Follow-up & Outcomes</h5>
+          <h5 class="mt-3">Follow-up &amp; Outcomes</h5>
 
           <div class="mb-2">
             <label class="form-label" for="fu_months">Follow-up duration (months)</label>
@@ -194,6 +235,52 @@
               </label>
             </div>
           </div>
+
+          <h5 class="mt-3">Laboratory</h5>
+
+          <div class="mb-2">
+            <label class="form-label" id="lab_hb_label" for="lab_hb">Hb (g/dL)</label>
+            <input type="number" step="0.1" id="lab_hb" class="form-control"
+                   data-min="3" data-max="17" />
+          </div>
+          <div class="mb-2">
+            <label class="form-label" id="lab_wbc_label" for="lab_wbc">WBC (/µL)</label>
+            <input type="number" id="lab_wbc" class="form-control"
+                   data-min="1000" data-max="20000" />
+          </div>
+          <div class="mb-2">
+            <label class="form-label" id="lab_plt_label" for="lab_plt">Platelet (/µL)</label>
+            <input type="number" id="lab_plt" class="form-control"
+                   data-min="50000" data-max="1000000" />
+          </div>
+          <div class="mb-2">
+            <label class="form-label" id="lab_bun_label" for="lab_bun">BUN (mg/dL)</label>
+            <input type="number" step="0.1" id="lab_bun" class="form-control"
+                   data-min="3" data-max="150" />
+          </div>
+          <div class="mb-2">
+            <label class="form-label" id="lab_cr_label" for="lab_cr">Creatinine (mg/dL)</label>
+            <input type="number" step="0.01" id="lab_cr" class="form-control"
+                   data-min="0.2" data-max="5" />
+            <div class="form-text" id="egfr_display">
+              eGFR (CKD-EPI 2021): —
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label" id="lab_pt_label" for="lab_pt">PT (sec)</label>
+            <input type="number" step="0.1" id="lab_pt" class="form-control"
+                   data-min="8" data-max="20" />
+          </div>
+          <div class="mb-2">
+            <label class="form-label" id="lab_ptt_label" for="lab_ptt">PTT (sec)</label>
+            <input type="number" step="0.1" id="lab_ptt" class="form-control"
+                   data-min="20" data-max="40" />
+          </div>
+          <div class="mb-2">
+            <label class="form-label" id="lab_inr_label" for="lab_inr">INR</label>
+            <input type="number" step="0.01" id="lab_inr" class="form-control"
+                   data-min="0.8" data-max="5" />
+          </div>
         </div>
       </div>
     </form>
@@ -220,7 +307,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "cied_records_v1";
+    const STORAGE_KEY = "cied_records_v2";
 
     function loadRecords() {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -243,24 +330,115 @@
       el.className = isError ? "mb-3 text-danger" : "mb-3 text-primary";
     }
 
+    function parseAndNormalizeDate(ddmmyyyy) {
+      if (!ddmmyyyy) return "";
+      const parts = ddmmyyyy.trim().split(/[\/\-\.]/);
+      if (parts.length !== 3) return ddmmyyyy.trim(); // leave as is
+      let [d, m, y] = parts.map(p => p.trim());
+      let day = parseInt(d, 10);
+      let month = parseInt(m, 10);
+      let year = parseInt(y, 10);
+      if (isNaN(day) || isNaN(month) || isNaN(year)) return ddmmyyyy.trim();
+      if (year >= 2200) {
+        year = year - 543; // convert B.E. to A.D.
+      }
+      // simple sanity check
+      if (year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) {
+        return ddmmyyyy.trim();
+      }
+      const dd = String(day).padStart(2, "0");
+      const mm = String(month).padStart(2, "0");
+      return `${dd}/${mm}/${year}`;
+    }
+
+    function getAntiplateletSelection() {
+      const ids = [
+        { id: "ap_asa", name: "ASA" },
+        { id: "ap_clopidogrel", name: "Clopidogrel" },
+        { id: "ap_ticagrelor", name: "Ticagrelor" },
+        { id: "ap_prasugrel", name: "Prasugrel" }
+      ];
+      const selected = [];
+      ids.forEach(x => {
+        if (document.getElementById(x.id).checked) selected.push(x.name);
+      });
+      return selected;
+    }
+
+    function setAntiplateletSelection(str) {
+      const ids = {
+        "ASA": "ap_asa",
+        "Clopidogrel": "ap_clopidogrel",
+        "Ticagrelor": "ap_ticagrelor",
+        "Prasugrel": "ap_prasugrel"
+      };
+      // clear all
+      Object.values(ids).forEach(id => {
+        document.getElementById(id).checked = false;
+      });
+      if (!str) return;
+      const items = String(str).split(/[;,]/).map(s => s.trim()).filter(Boolean);
+      items.forEach(name => {
+        const id = ids[name];
+        if (id) document.getElementById(id).checked = true;
+      });
+    }
+
     function formToRecord() {
       const get = id => document.getElementById(id);
-      return {
-        patient_code: get("patient_code").value.trim(),
-        op_date: get("op_date").value || "",
+      const patient_code = get("patient_code").value.trim();
+      const ageVal = get("age").value;
+      const age = ageVal === "" ? "" : Number(ageVal);
+
+      if (!patient_code) {
+        setStatus("Patient code is required.", true);
+        return null;
+      }
+      if (age !== "" && (age < 15 || age > 110)) {
+        setStatus("Age must be between 15 and 110.", true);
+        return null;
+      }
+
+      const lvefVal = get("lvef").value;
+      const lvef = lvefVal === "" ? "" : Number(lvefVal);
+      if (lvef !== "" && (lvef < 1 || lvef > 99)) {
+        setStatus("LVEF must be between 1 and 99%.", true);
+        return null;
+      }
+
+      const hba1cVal = get("hba1c").value;
+      const dmChecked = get("dm").checked;
+      const hba1c = hba1cVal === "" ? "" : Number(hba1cVal);
+      if (dmChecked && hba1c !== "" && (hba1c < 1 || hba1c > 20)) {
+        setStatus("HbA1c must be between 1 and 20%.", true);
+        return null;
+      }
+
+      const opDateRaw = get("op_date").value;
+      const op_date = parseAndNormalizeDate(opDateRaw);
+
+      const record = {
+        patient_code,
+        op_date,
         suture_type: get("suture_type").value,
-        age: get("age").value || "",
+        age: age === "" ? "" : age,
         sex: get("sex").value,
+        weight: get("weight").value || "",
+        height: get("height").value || "",
         bmi: get("bmi").value || "",
-        dm: get("dm").checked ? 1 : 0,
-        ckd_esrd: get("ckd_esrd").checked ? 1 : 0,
+        lvef: lvef === "" ? "" : lvef,
+        dm: dmChecked ? 1 : 0,
+        hba1c: hba1c === "" ? "" : hba1c,
+        rrt: get("rrt").checked ? 1 : 0,
         cad: get("cad").checked ? 1 : 0,
         hf: get("hf").checked ? 1 : 0,
+        af: get("af").checked ? 1 : 0,
+        cld: get("cld").checked ? 1 : 0,
         malignancy: get("malignancy").checked ? 1 : 0,
         immunosuppression: get("immunosuppression").checked ? 1 : 0,
         anticoagulant_type: get("anticoagulant_type").value,
         bridging: get("bridging").checked ? 1 : 0,
-        antiplatelet_regimen: get("antiplatelet_regimen").value,
+        antiplatelet_agents: getAntiplateletSelection().join(";"),
         procedure_time: get("procedure_time").value || "",
         procedure_type: get("procedure_type").value,
         fu_months: get("fu_months").value || "",
@@ -268,8 +446,19 @@
         major_ciedi_12m: get("major_ciedi_12m").checked ? 1 : 0,
         wound_reintervention_90d: get("wound_reintervention_90d").checked ? 1 : 0,
         unplanned_abx_30d: get("unplanned_abx_30d").checked ? 1 : 0,
-        pocket_hematoma: get("pocket_hematoma").checked ? 1 : 0
+        pocket_hematoma: get("pocket_hematoma").checked ? 1 : 0,
+        lab_hb: get("lab_hb").value || "",
+        lab_wbc: get("lab_wbc").value || "",
+        lab_plt: get("lab_plt").value || "",
+        lab_bun: get("lab_bun").value || "",
+        lab_cr: get("lab_cr").value || "",
+        lab_pt: get("lab_pt").value || "",
+        lab_ptt: get("lab_ptt").value || "",
+        lab_inr: get("lab_inr").value || "",
+        egfr: get("egfr_display").dataset.egfr || ""
       };
+
+      return record;
     }
 
     function recordToForm(rec) {
@@ -279,26 +468,57 @@
       set("patient_code", rec.patient_code || "");
       set("op_date", rec.op_date || "");
       set("suture_type", rec.suture_type || "");
-      set("age", rec.age || "");
+      set("age", rec.age === "" ? "" : rec.age);
       set("sex", rec.sex || "");
+      set("weight", rec.weight || "");
+      set("height", rec.height || "");
       set("bmi", rec.bmi || "");
+      set("lvef", rec.lvef === "" ? "" : rec.lvef);
+
       setCheck("dm", rec.dm);
-      setCheck("ckd_esrd", rec.ckd_esrd);
+      set("hba1c", rec.hba1c === "" ? "" : rec.hba1c);
+      toggleA1C();
+
+      setCheck("rrt", rec.rrt);
       setCheck("cad", rec.cad);
       setCheck("hf", rec.hf);
+      setCheck("af", rec.af);
+      setCheck("cld", rec.cld);
       setCheck("malignancy", rec.malignancy);
       setCheck("immunosuppression", rec.immunosuppression);
+
       set("anticoagulant_type", rec.anticoagulant_type || "None");
       setCheck("bridging", rec.bridging);
-      set("antiplatelet_regimen", rec.antiplatelet_regimen || "None");
+      setAntiplateletSelection(rec.antiplatelet_agents || "");
+
       set("procedure_time", rec.procedure_time || "");
       set("procedure_type", rec.procedure_type || "");
       set("fu_months", rec.fu_months || "");
       setCheck("lost_to_fu", rec.lost_to_fu);
+
       setCheck("major_ciedi_12m", rec.major_ciedi_12m);
       setCheck("wound_reintervention_90d", rec.wound_reintervention_90d);
       setCheck("unplanned_abx_30d", rec.unplanned_abx_30d);
       setCheck("pocket_hematoma", rec.pocket_hematoma);
+
+      set("lab_hb", rec.lab_hb || "");
+      set("lab_wbc", rec.lab_wbc || "");
+      set("lab_plt", rec.lab_plt || "");
+      set("lab_bun", rec.lab_bun || "");
+      set("lab_cr", rec.lab_cr || "");
+      set("lab_pt", rec.lab_pt || "");
+      set("lab_ptt", rec.lab_ptt || "");
+      set("lab_inr", rec.lab_inr || "");
+      updateAllLabHighlighting();
+
+      const egfrDisplay = document.getElementById("egfr_display");
+      if (rec.egfr) {
+        egfrDisplay.textContent = "eGFR (CKD-EPI 2021): " + rec.egfr + " mL/min/1.73m²";
+        egfrDisplay.dataset.egfr = rec.egfr;
+      } else {
+        egfrDisplay.textContent = "eGFR (CKD-EPI 2021): —";
+        egfrDisplay.dataset.egfr = "";
+      }
     }
 
     function clearForm() {
@@ -308,16 +528,22 @@
         suture_type: "",
         age: "",
         sex: "",
+        weight: "",
+        height: "",
         bmi: "",
+        lvef: "",
         dm: 0,
-        ckd_esrd: 0,
+        hba1c: "",
+        rrt: 0,
         cad: 0,
         hf: 0,
+        af: 0,
+        cld: 0,
         malignancy: 0,
         immunosuppression: 0,
         anticoagulant_type: "None",
         bridging: 0,
-        antiplatelet_regimen: "None",
+        antiplatelet_agents: "",
         procedure_time: "",
         procedure_type: "",
         fu_months: "",
@@ -325,7 +551,16 @@
         major_ciedi_12m: 0,
         wound_reintervention_90d: 0,
         unplanned_abx_30d: 0,
-        pocket_hematoma: 0
+        pocket_hematoma: 0,
+        lab_hb: "",
+        lab_wbc: "",
+        lab_plt: "",
+        lab_bun: "",
+        lab_cr: "",
+        lab_pt: "",
+        lab_ptt: "",
+        lab_inr: "",
+        egfr: ""
       });
     }
 
@@ -395,6 +630,99 @@
       setStatus("CSV exported. Check your downloads.");
     }
 
+    function toggleA1C() {
+      const dm = document.getElementById("dm").checked;
+      const container = document.getElementById("a1c_container");
+      if (dm) {
+        container.style.display = "";
+      } else {
+        container.style.display = "none";
+        document.getElementById("hba1c").value = "";
+      }
+    }
+
+    function updateBMI() {
+      const w = parseFloat(document.getElementById("weight").value);
+      const h = parseFloat(document.getElementById("height").value);
+      const bmiInput = document.getElementById("bmi");
+      if (isFinite(w) && isFinite(h) && h > 0) {
+        const h_m = h / 100;
+        const bmi = w / (h_m * h_m);
+        bmiInput.value = bmi.toFixed(1);
+      } else {
+        bmiInput.value = "";
+      }
+    }
+
+    function updateLabHighlight(idInput, idLabel) {
+      const input = document.getElementById(idInput);
+      const label = document.getElementById(idLabel);
+      const valStr = input.value;
+      if (!valStr) {
+        label.classList.remove("text-danger");
+        return;
+      }
+      const val = parseFloat(valStr);
+      const min = parseFloat(input.dataset.min);
+      const max = parseFloat(input.dataset.max);
+      if (!isFinite(val) || !isFinite(min) || !isFinite(max)) {
+        label.classList.remove("text-danger");
+        return;
+      }
+      if (val < min || val > max) {
+        label.classList.add("text-danger");
+      } else {
+        label.classList.remove("text-danger");
+      }
+    }
+
+    function updateAllLabHighlighting() {
+      updateLabHighlight("lab_hb", "lab_hb_label");
+      updateLabHighlight("lab_wbc", "lab_wbc_label");
+      updateLabHighlight("lab_plt", "lab_plt_label");
+      updateLabHighlight("lab_bun", "lab_bun_label");
+      updateLabHighlight("lab_cr", "lab_cr_label");
+      updateLabHighlight("lab_pt", "lab_pt_label");
+      updateLabHighlight("lab_ptt", "lab_ptt_label");
+      updateLabHighlight("lab_inr", "lab_inr_label");
+    }
+
+    function updateEGFR() {
+      const cr = parseFloat(document.getElementById("lab_cr").value);
+      const age = parseFloat(document.getElementById("age").value);
+      const sex = document.getElementById("sex").value;
+      const egfrDisplay = document.getElementById("egfr_display");
+
+      if (!isFinite(cr) || !isFinite(age) || !sex) {
+        egfrDisplay.textContent = "eGFR (CKD-EPI 2021): —";
+        egfrDisplay.dataset.egfr = "";
+        return;
+      }
+
+      // CKD-EPI 2021 (non-race)
+      let k, a;
+      let sexFactor = 1.0;
+      if (sex === "Female") {
+        k = 0.7;
+        a = -0.241;
+        sexFactor = 1.012;
+      } else {
+        k = 0.9;
+        a = -0.302;
+        sexFactor = 1.0;
+      }
+
+      const scr_k = cr / k;
+      const minPart = Math.min(scr_k, 1) ** a;
+      const maxPart = Math.max(scr_k, 1) ** -1.200;
+      const egfr = 142 * minPart * maxPart * (0.9938 ** age) * sexFactor;
+      const egfrRounded = Math.round(egfr);
+
+      egfrDisplay.textContent =
+        "eGFR (CKD-EPI 2021): " + egfrRounded + " mL/min/1.73m²";
+      egfrDisplay.dataset.egfr = egfrRounded;
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       refreshTable();
 
@@ -405,10 +733,7 @@
 
       document.getElementById("btnSave").addEventListener("click", () => {
         const rec = formToRecord();
-        if (!rec.patient_code) {
-          setStatus("Patient code is required.", true);
-          return;
-        }
+        if (!rec) return; // validation failed
         let records = loadRecords();
         const idx = records.findIndex(r => r.patient_code === rec.patient_code);
         if (idx >= 0) {
@@ -438,6 +763,21 @@
       });
 
       document.getElementById("btnExport").addEventListener("click", exportCSV);
+
+      document.getElementById("dm").addEventListener("change", toggleA1C);
+      document.getElementById("weight").addEventListener("input", updateBMI);
+      document.getElementById("height").addEventListener("input", updateBMI);
+
+      ["lab_hb","lab_wbc","lab_plt","lab_bun","lab_cr",
+       "lab_pt","lab_ptt","lab_inr"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => {
+          updateLabHighlight(id, id + "_label");
+          if (id === "lab_cr") updateEGFR();
+        });
+      });
+
+      document.getElementById("age").addEventListener("input", updateEGFR);
+      document.getElementById("sex").addEventListener("change", updateEGFR);
     });
   </script>
 </body>
