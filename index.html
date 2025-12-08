@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CIED Pocket Closure Data Entry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap for mobile-friendly layout -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body { padding: 1rem; }
+    .record-row { cursor: pointer; }
+    .record-row:hover { background-color: #f5f5f5; }
+    .required::after {
+      content: " *";
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3 class="mb-3">CIED Pocket Closure – Data Entry (Local Only)</h3>
+    <p class="text-muted">
+      Data is saved <strong>only on this device</strong> (browser localStorage).  
+      Remember to <strong>Export CSV</strong> regularly and send the file to the main researcher.
+    </p>
+
+    <!-- Controls -->
+    <div class="mb-3 d-flex flex-wrap gap-2">
+      <button id="btnNew" class="btn btn-secondary">New record</button>
+      <button id="btnSave" class="btn btn-primary">Save / Update</button>
+      <button id="btnDelete" class="btn btn-danger">Delete current</button>
+      <button id="btnExport" class="btn btn-success">Export CSV</button>
+    </div>
+
+    <div id="status" class="mb-3 text-primary"></div>
+
+    <!-- Form -->
+    <form id="dataForm">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Patient & Procedure</h5>
+          <div class="mb-2">
+            <label class="form-label required" for="patient_code">Patient code (your ID)</label>
+            <input type="text" id="patient_code" class="form-control" required />
+            <div class="form-text">Do not use HN. Use your own internal ID (e.g. ACS001).</div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="op_date">Operation date</label>
+            <input type="date" id="op_date" class="form-control" />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="suture_type">Suture type</label>
+            <select id="suture_type" class="form-select">
+              <option value=""></option>
+              <option value="Monocryl">Monocryl</option>
+              <option value="Vicryl">Vicryl</option>
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="age">Age (years)</label>
+            <input type="number" id="age" class="form-control" min="18" max="120" />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="sex">Sex</label>
+            <select id="sex" class="form-select">
+              <option value=""></option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="bmi">BMI</label>
+            <input type="number" step="0.1" id="bmi" class="form-control" />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Comorbidities</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="dm" />
+              <label class="form-check-label" for="dm">Diabetes</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="ckd_esrd" />
+              <label class="form-check-label" for="ckd_esrd">CKD/ESRD</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="cad" />
+              <label class="form-check-label" for="cad">CAD</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="hf" />
+              <label class="form-check-label" for="hf">Heart failure</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="malignancy" />
+              <label class="form-check-label" for="malignancy">Active malignancy</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="immunosuppression" />
+              <label class="form-check-label" for="immunosuppression">Immunosuppression</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <h5>Antithrombotic & Procedure</h5>
+
+          <div class="mb-2">
+            <label class="form-label" for="anticoagulant_type">Anticoagulant</label>
+            <select id="anticoagulant_type" class="form-select">
+              <option value="None">None</option>
+              <option value="NOAC">NOAC</option>
+              <option value="Warfarin">Warfarin</option>
+              <option value="LMWH/Heparin">LMWH/Heparin</option>
+            </select>
+          </div>
+
+          <div class="mb-2 form-check">
+            <input class="form-check-input" type="checkbox" id="bridging" />
+            <label class="form-check-label" for="bridging">Bridging anticoagulation</label>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="antiplatelet_regimen">Antiplatelet regimen</label>
+            <select id="antiplatelet_regimen" class="form-select">
+              <option value="None">None</option>
+              <option value="SAPT">SAPT</option>
+              <option value="DAPT">DAPT</option>
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="procedure_time">Procedure time (minutes)</label>
+            <input type="number" id="procedure_time" class="form-control" min="0" max="600" />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label" for="procedure_type">Procedure type</label>
+            <select id="procedure_type" class="form-select">
+              <option value=""></option>
+              <option value="De novo PM">De novo PM</option>
+              <option value="De novo ICD">De novo ICD</option>
+              <option value="De novo CRT-P/D">De novo CRT-P/D</option>
+              <option value="Generator change">Generator change</option>
+              <option value="Lead revision/addition">Lead revision/addition</option>
+              <option value="Pocket relocation">Pocket relocation</option>
+            </select>
+          </div>
+
+          <h5 class="mt-3">Follow-up & Outcomes</h5>
+
+          <div class="mb-2">
+            <label class="form-label" for="fu_months">Follow-up duration (months)</label>
+            <input type="number" step="0.1" id="fu_months" class="form-control" />
+          </div>
+
+          <div class="mb-2 form-check">
+            <input class="form-check-input" type="checkbox" id="lost_to_fu" />
+            <label class="form-check-label" for="lost_to_fu">Lost to follow-up</label>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Outcomes</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="major_ciedi_12m" />
+              <label class="form-check-label" for="major_ciedi_12m">
+                Major CIED infection ≤12 months
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="wound_reintervention_90d" />
+              <label class="form-check-label" for="wound_reintervention_90d">
+                Wound-related reintervention ≤90 days
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="unplanned_abx_30d" />
+              <label class="form-check-label" for="unplanned_abx_30d">
+                Unplanned antibiotics ≤30 days
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="pocket_hematoma" />
+              <label class="form-check-label" for="pocket_hematoma">
+                Significant pocket hematoma
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <hr class="my-4" />
+
+    <h5>Saved records on this device</h5>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered" id="recordsTable">
+        <thead class="table-light">
+          <tr>
+            <th>Patient code</th>
+            <th>Op date</th>
+            <th>Suture</th>
+            <th>Age</th>
+            <th>Major CIEDI 12m</th>
+          </tr>
+        </thead>
+        <tbody id="recordsBody">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "cied_records_v1";
+
+    function loadRecords() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error("Error parsing storage", e);
+        return [];
+      }
+    }
+
+    function saveRecords(records) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function setStatus(msg, isError = false) {
+      const el = document.getElementById("status");
+      el.textContent = msg;
+      el.className = isError ? "mb-3 text-danger" : "mb-3 text-primary";
+    }
+
+    function formToRecord() {
+      const get = id => document.getElementById(id);
+      return {
+        patient_code: get("patient_code").value.trim(),
+        op_date: get("op_date").value || "",
+        suture_type: get("suture_type").value,
+        age: get("age").value || "",
+        sex: get("sex").value,
+        bmi: get("bmi").value || "",
+        dm: get("dm").checked ? 1 : 0,
+        ckd_esrd: get("ckd_esrd").checked ? 1 : 0,
+        cad: get("cad").checked ? 1 : 0,
+        hf: get("hf").checked ? 1 : 0,
+        malignancy: get("malignancy").checked ? 1 : 0,
+        immunosuppression: get("immunosuppression").checked ? 1 : 0,
+        anticoagulant_type: get("anticoagulant_type").value,
+        bridging: get("bridging").checked ? 1 : 0,
+        antiplatelet_regimen: get("antiplatelet_regimen").value,
+        procedure_time: get("procedure_time").value || "",
+        procedure_type: get("procedure_type").value,
+        fu_months: get("fu_months").value || "",
+        lost_to_fu: get("lost_to_fu").checked ? 1 : 0,
+        major_ciedi_12m: get("major_ciedi_12m").checked ? 1 : 0,
+        wound_reintervention_90d: get("wound_reintervention_90d").checked ? 1 : 0,
+        unplanned_abx_30d: get("unplanned_abx_30d").checked ? 1 : 0,
+        pocket_hematoma: get("pocket_hematoma").checked ? 1 : 0
+      };
+    }
+
+    function recordToForm(rec) {
+      const set = (id, val) => { document.getElementById(id).value = val ?? ""; };
+      const setCheck = (id, val) => { document.getElementById(id).checked = !!val; };
+
+      set("patient_code", rec.patient_code || "");
+      set("op_date", rec.op_date || "");
+      set("suture_type", rec.suture_type || "");
+      set("age", rec.age || "");
+      set("sex", rec.sex || "");
+      set("bmi", rec.bmi || "");
+      setCheck("dm", rec.dm);
+      setCheck("ckd_esrd", rec.ckd_esrd);
+      setCheck("cad", rec.cad);
+      setCheck("hf", rec.hf);
+      setCheck("malignancy", rec.malignancy);
+      setCheck("immunosuppression", rec.immunosuppression);
+      set("anticoagulant_type", rec.anticoagulant_type || "None");
+      setCheck("bridging", rec.bridging);
+      set("antiplatelet_regimen", rec.antiplatelet_regimen || "None");
+      set("procedure_time", rec.procedure_time || "");
+      set("procedure_type", rec.procedure_type || "");
+      set("fu_months", rec.fu_months || "");
+      setCheck("lost_to_fu", rec.lost_to_fu);
+      setCheck("major_ciedi_12m", rec.major_ciedi_12m);
+      setCheck("wound_reintervention_90d", rec.wound_reintervention_90d);
+      setCheck("unplanned_abx_30d", rec.unplanned_abx_30d);
+      setCheck("pocket_hematoma", rec.pocket_hematoma);
+    }
+
+    function clearForm() {
+      recordToForm({
+        patient_code: "",
+        op_date: "",
+        suture_type: "",
+        age: "",
+        sex: "",
+        bmi: "",
+        dm: 0,
+        ckd_esrd: 0,
+        cad: 0,
+        hf: 0,
+        malignancy: 0,
+        immunosuppression: 0,
+        anticoagulant_type: "None",
+        bridging: 0,
+        antiplatelet_regimen: "None",
+        procedure_time: "",
+        procedure_type: "",
+        fu_months: "",
+        lost_to_fu: 0,
+        major_ciedi_12m: 0,
+        wound_reintervention_90d: 0,
+        unplanned_abx_30d: 0,
+        pocket_hematoma: 0
+      });
+    }
+
+    function refreshTable() {
+      const records = loadRecords();
+      const tbody = document.getElementById("recordsBody");
+      tbody.innerHTML = "";
+
+      records.forEach(rec => {
+        const tr = document.createElement("tr");
+        tr.className = "record-row";
+        tr.dataset.patientCode = rec.patient_code;
+        tr.innerHTML = `
+          <td>${rec.patient_code || ""}</td>
+          <td>${rec.op_date || ""}</td>
+          <td>${rec.suture_type || ""}</td>
+          <td>${rec.age || ""}</td>
+          <td>${rec.major_ciedi_12m === 1 ? "Yes" : "No"}</td>
+        `;
+        tr.addEventListener("click", () => {
+          const found = loadRecords().find(r => r.patient_code === rec.patient_code);
+          if (found) {
+            recordToForm(found);
+            setStatus("Loaded record for patient code: " + rec.patient_code);
+          }
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportCSV() {
+      const records = loadRecords();
+      if (records.length === 0) {
+        setStatus("No records to export.", true);
+        return;
+      }
+
+      const cols = Object.keys(records[0]);
+      const escape = value => {
+        if (value == null) return "";
+        const s = String(value);
+        if (s.includes(",") || s.includes("\n") || s.includes("\"")) {
+          return '"' + s.replace(/"/g, '""') + '"';
+        }
+        return s;
+      };
+
+      const lines = [];
+      lines.push(cols.join(","));
+      records.forEach(rec => {
+        const row = cols.map(c => escape(rec[c]));
+        lines.push(row.join(","));
+      });
+
+      const csvContent = lines.join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `cied_data_${date}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setStatus("CSV exported. Check your downloads.");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      refreshTable();
+
+      document.getElementById("btnNew").addEventListener("click", () => {
+        clearForm();
+        setStatus("New blank record.");
+      });
+
+      document.getElementById("btnSave").addEventListener("click", () => {
+        const rec = formToRecord();
+        if (!rec.patient_code) {
+          setStatus("Patient code is required.", true);
+          return;
+        }
+        let records = loadRecords();
+        const idx = records.findIndex(r => r.patient_code === rec.patient_code);
+        if (idx >= 0) {
+          records[idx] = rec;
+          setStatus("Record updated for patient code: " + rec.patient_code);
+        } else {
+          records.push(rec);
+          setStatus("New record saved for patient code: " + rec.patient_code);
+        }
+        saveRecords(records);
+        refreshTable();
+      });
+
+      document.getElementById("btnDelete").addEventListener("click", () => {
+        const code = document.getElementById("patient_code").value.trim();
+        if (!code) {
+          setStatus("No patient code specified to delete.", true);
+          return;
+        }
+        if (!confirm("Delete record for patient code: " + code + " ?")) return;
+        let records = loadRecords();
+        records = records.filter(r => r.patient_code !== code);
+        saveRecords(records);
+        refreshTable();
+        clearForm();
+        setStatus("Record deleted for patient code: " + code);
+      });
+
+      document.getElementById("btnExport").addEventListener("click", exportCSV);
+    });
+  </script>
+</body>
+</html>
