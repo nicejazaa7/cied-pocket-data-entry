@@ -357,48 +357,51 @@
     }
 
     // Live input formatter for DD/MM/YYYY with BE->AD conversion when 8 digits
-    function formatOpDate() {
-      const input = document.getElementById("op_date");
-      let digits = input.value.replace(/\D/g, "");
-      digits = digits.slice(0, 8); // max 8 digits DDMMYYYY
+function formatOpDate() {
+  const input = document.getElementById("op_date");
 
-      let day = "";
-      let month = "";
-      let yearStr = "";
-      let formatted = "";
+  // extract ONLY digits
+  let digits = input.value.replace(/\D/g, "");
+  if (digits.length > 8) digits = digits.slice(0, 8);
 
-      if (digits.length >= 2) {
-        day = digits.slice(0, 2);
-      }
-      if (digits.length >= 4) {
-        month = digits.slice(2, 4);
-      }
-      if (digits.length > 4) {
-        yearStr = digits.slice(4);
-      }
+  let dd = "";
+  let mm = "";
+  let yyyy = "";
 
-      if (yearStr.length === 4) {
-        let yearNum = parseInt(yearStr, 10);
-        if (!isNaN(yearNum) && yearNum >= 2200) {
-          yearNum = yearNum - 543; // BE -> AD
-        }
-        yearStr = String(yearNum).padStart(4, "0");
-      }
+  if (digits.length >= 2) dd = digits.slice(0, 2);
+  if (digits.length >= 4) mm = digits.slice(2, 4);
+  if (digits.length >= 5) yyyy = digits.slice(4);
 
-      if (day) {
-        formatted = day;
-        if (month) {
-          formatted += "/" + month;
-          if (yearStr.length === 4) {
-            formatted += "/" + yearStr;
-          }
-        }
-      } else {
-        formatted = digits;
-      }
+  // If full 4-digit year → check BE/AD
+  if (yyyy.length === 4) {
+    let y = parseInt(yyyy);
+    if (y >= 2200) y = y - 543;        // Convert BE → AD
+    yyyy = String(y).padStart(4, "0");
+  }
 
-      input.value = formatted;
-    }
+  // Apply range limits only when complete (avoid blocking typing)
+  if (dd.length === 2) {
+    let dnum = parseInt(dd);
+    if (dnum < 1) dnum = 1;
+    if (dnum > 31) dnum = 31;
+    dd = String(dnum).padStart(2, "0");
+  }
+
+  if (mm.length === 2) {
+    let mnum = parseInt(mm);
+    if (mnum < 1) mnum = 1;
+    if (mnum > 12) mnum = 12;
+    mm = String(mnum).padStart(2, "0");
+  }
+
+  // Build formatted output
+  let out = "";
+  if (dd) out = dd;
+  if (dd && mm) out = dd + "/" + mm;
+  if (dd && mm && yyyy.length === 4) out = dd + "/" + mm + "/" + yyyy;
+
+  input.value = out;
+}
 
     function parseAndNormalizeDate(ddmmyyyy) {
       if (!ddmmyyyy) return "";
