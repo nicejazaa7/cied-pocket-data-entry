@@ -356,96 +356,115 @@
       el.className = isError ? "mb-3 text-danger" : "mb-3 text-primary";
     }
 
-    // Live input formatter for DD/MM/YYYY with BE->AD conversion when 8 digits
-function formatOpDate() {
-  function parseAndNormalizeDate(ddmmyyyy) {
-  if (!ddmmyyyy) return "";
-  const parts = ddmmyyyy.trim().split(/[\/\-\.]/);
-  if (parts.length !== 3) return ddmmyyyy.trim();
+       // Live input formatter + parser for DD/MM/YYYY
 
-  let [d, m, y] = parts.map(p => p.trim());
-  let day = parseInt(d, 10);
-  let month = parseInt(m, 10);
-  let year = parseInt(y, 10);
+    // Used when saving: clean up and normalize DD/MM/YYYY, convert BE->AD
+    function parseAndNormalizeDate(ddmmyyyy) {
+      if (!ddmmyyyy) return "";
+      const parts = ddmmyyyy.trim().split(/[\/\-\.]/);
+      if (parts.length !== 3) return ddmmyyyy.trim();
 
-  if (isNaN(day) || isNaN(month) || isNaN(year)) return ddmmyyyy.trim();
+      let [d, m, y] = parts.map(p => p.trim());
+      let day = parseInt(d, 10);
+      let month = parseInt(m, 10);
+      let year = parseInt(y, 10);
 
-  // Convert B.E. to A.D.
-  if (year >= 2200) {
-    year = year - 543;
-  }
+      if (isNaN(day) || isNaN(month) || isNaN(year)) return ddmmyyyy.trim();
 
-  const dd = String(day).padStart(2, "0");
-  const mm = String(month).padStart(2, "0");
-  const yyyy = String(year).padStart(4, "0");
+      if (year >= 2200) {
+        year = year - 543; // BE -> AD
+      }
 
-  return `${dd}/${mm}/${yyyy}`;
-}
-
-  const input = document.getElementById("op_date");
-
-  // keep only digits, max 8 (DDMMYYYY)
-  let digits = input.value.replace(/\D/g, "");
-  if (digits.length > 8) digits = digits.slice(0, 8);
-
-  // CASE 1: 0–2 digits -> just show as-is (partial DD)
-  if (digits.length <= 2) {
-    input.value = digits;
-    return;
-  }
-
-  // CASE 2: 3–4 digits -> DD/MM (partial or full MM)
-  if (digits.length <= 4) {
-    let dd = digits.slice(0, 2);
-    let mm = digits.slice(2); // 1 or 2 digits
-
-    // clamp when 2-digit month is present
-    if (mm.length === 2) {
-      let mnum = parseInt(mm, 10);
-      if (mnum < 1) mnum = 1;
-      if (mnum > 12) mnum = 12;
-      mm = String(mnum).padStart(2, "0");
+      const dd = String(day).padStart(2, "0");
+      const mm = String(month).padStart(2, "0");
+      const yyyy = String(year).padStart(4, "0");
+      return `${dd}/${mm}/${yyyy}`;
     }
 
-    input.value = dd + "/" + mm;
-    return;
-  }
+    // Used while typing: live formatter
+    function formatOpDate() {
+      const input = document.getElementById("op_date");
 
-  // CASE 3: 5–8 digits -> DD/MM/YYYY (partial or full year)
-  // here we know length is 5,6,7,8
-  let dd = digits.slice(0, 2);
-  let mm = digits.slice(2, 4);
-  let yyyy = digits.slice(4); // 1–4 digits
+      // keep only digits, max 8 (DDMMYYYY)
+      let digits = input.value.replace(/\D/g, "");
+      if (digits.length > 8) digits = digits.slice(0, 8);
 
-  // clamp DD and MM once they are 2 digits
-  if (dd.length === 2) {
-    let dnum = parseInt(dd, 10);
-    if (dnum < 1) dnum = 1;
-    if (dnum > 31) dnum = 31;
-    dd = String(dnum).padStart(2, "0");
-  }
+      // CASE 1: 0–2 digits -> just show as-is (partial DD)
+      if (digits.length <= 2) {
+        input.value = digits;
+        return;
+      }
 
-  if (mm.length === 2) {
-    let mnum = parseInt(mm, 10);
-    if (mnum < 1) mnum = 1;
-    if (mnum > 12) mnum = 12;
-    mm = String(mnum).padStart(2, "0");
-  }
+      // CASE 2: 3–4 digits -> DD/MM (partial or full MM)
+      if (digits.length <= 4) {
+        let dd = digits.slice(0, 2);
+        let mm = digits.slice(2); // 1 or 2 digits
 
-  // If full 4-digit year -> convert BE to AD if needed
-  if (yyyy.length === 4) {
-    let y = parseInt(yyyy, 10);
-    if (!isNaN(y) && y >= 2200) y = y - 543; // BE -> AD
-    yyyy = String(y).padStart(4, "0");
-  }
+        // clamp when 2-digit month is present
+        if (mm.length === 2) {
+          let mnum = parseInt(mm, 10);
+          if (mnum < 1) mnum = 1;
+          if (mnum > 12) mnum = 12;
+          mm = String(mnum).padStart(2, "0");
+        }
 
-  let out = dd + "/" + mm;
-  if (yyyy.length > 0) {
-    out += "/" + yyyy;
-  }
+        input.value = dd + "/" + mm;
+        return;
+      }
 
-  input.value = out;
-}
+      // CASE 3: 5–8 digits -> DD/MM/YYYY (partial or full year)
+      let dd = digits.slice(0, 2);
+      let mm = digits.slice(2, 4);
+      let yyyy = digits.slice(4); // 1–4 digits
+
+      // clamp DD and MM
+      if (dd.length === 2) {
+        let dnum = parseInt(dd, 10);
+        if (dnum < 1) dnum = 1;
+        if (dnum > 31) dnum = 31;
+        dd = String(dnum).padStart(2, "0");
+      }
+
+      if (mm.length === 2) {
+        let mnum = parseInt(mm, 10);
+        if (mnum < 1) mnum = 1;
+        if (mnum > 12) mnum = 12;
+        mm = String(mnum).padStart(2, "0");
+      }
+
+      // If full 4-digit year -> convert BE to AD if needed
+      if (yyyy.length === 4) {
+        let y = parseInt(yyyy, 10);
+        if (!isNaN(y) && y >= 2200) y = y - 543; // BE -> AD
+        yyyy = String(y).padStart(4, "0");
+      }
+
+      let out = dd + "/" + mm;
+      if (yyyy.length > 0) {
+        out += "/" + yyyy;
+      }
+
+      input.value = out;
+    }
+
+    function getAntiplateletSelection() {
+      const ids = [
+        { id: "ap_asa", name: "ASA" },
+        { id: "ap_clopidogrel", name: "Clopidogrel" },
+        { id: "ap_ticagrelor", name: "Ticagrelor" },
+        { id: "ap_prasugrel", name: "Prasugrel" }
+      ];
+
+      const selected = [];
+      ids.forEach(x => {
+        if (document.getElementById(x.id).checked) {
+          selected.push(x.name);
+        }
+      });
+
+      return selected;
+    }
+
 function getAntiplateletSelection() {
   const ids = [
     { id: "ap_asa", name: "ASA" },
