@@ -446,6 +446,23 @@ function formatOpDate() {
 
   input.value = out;
 }
+function getAntiplateletSelection() {
+  const ids = [
+    { id: "ap_asa", name: "ASA" },
+    { id: "ap_clopidogrel", name: "Clopidogrel" },
+    { id: "ap_ticagrelor", name: "Ticagrelor" },
+    { id: "ap_prasugrel", name: "Prasugrel" }
+  ];
+
+  const selected = [];
+  ids.forEach(x => {
+    if (document.getElementById(x.id).checked) {
+      selected.push(x.name);
+    }
+  });
+
+  return selected;
+}
 
     function setAntiplateletSelection(str) {
       const ids = {
