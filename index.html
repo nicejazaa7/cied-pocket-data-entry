@@ -358,6 +358,30 @@
 
     // Live input formatter for DD/MM/YYYY with BE->AD conversion when 8 digits
 function formatOpDate() {
+  function parseAndNormalizeDate(ddmmyyyy) {
+  if (!ddmmyyyy) return "";
+  const parts = ddmmyyyy.trim().split(/[\/\-\.]/);
+  if (parts.length !== 3) return ddmmyyyy.trim();
+
+  let [d, m, y] = parts.map(p => p.trim());
+  let day = parseInt(d, 10);
+  let month = parseInt(m, 10);
+  let year = parseInt(y, 10);
+
+  if (isNaN(day) || isNaN(month) || isNaN(year)) return ddmmyyyy.trim();
+
+  // Convert B.E. to A.D.
+  if (year >= 2200) {
+    year = year - 543;
+  }
+
+  const dd = String(day).padStart(2, "0");
+  const mm = String(month).padStart(2, "0");
+  const yyyy = String(year).padStart(4, "0");
+
+  return `${dd}/${mm}/${yyyy}`;
+}
+
   const input = document.getElementById("op_date");
 
   // keep only digits, max 8 (DDMMYYYY)
