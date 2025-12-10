@@ -332,7 +332,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     const STORAGE_KEY = "cied_records_v3";
 
     function loadRecords() {
@@ -355,8 +355,6 @@
       el.textContent = msg;
       el.className = isError ? "mb-3 text-danger" : "mb-3 text-primary";
     }
-
-       // Live input formatter + parser for DD/MM/YYYY
 
     // Used when saving: clean up and normalize DD/MM/YYYY, convert BE->AD
     function parseAndNormalizeDate(ddmmyyyy) {
@@ -381,7 +379,7 @@
       return `${dd}/${mm}/${yyyy}`;
     }
 
-    // Used while typing: live formatter
+    // Used while typing: live formatter for DD/MM/YYYY with optional BE->AD
     function formatOpDate() {
       const input = document.getElementById("op_date");
 
@@ -400,7 +398,6 @@
         let dd = digits.slice(0, 2);
         let mm = digits.slice(2); // 1 or 2 digits
 
-        // clamp when 2-digit month is present
         if (mm.length === 2) {
           let mnum = parseInt(mm, 10);
           if (mnum < 1) mnum = 1;
@@ -417,7 +414,6 @@
       let mm = digits.slice(2, 4);
       let yyyy = digits.slice(4); // 1–4 digits
 
-      // clamp DD and MM
       if (dd.length === 2) {
         let dnum = parseInt(dd, 10);
         if (dnum < 1) dnum = 1;
@@ -464,24 +460,6 @@
 
       return selected;
     }
-
-function getAntiplateletSelection() {
-  const ids = [
-    { id: "ap_asa", name: "ASA" },
-    { id: "ap_clopidogrel", name: "Clopidogrel" },
-    { id: "ap_ticagrelor", name: "Ticagrelor" },
-    { id: "ap_prasugrel", name: "Prasugrel" }
-  ];
-
-  const selected = [];
-  ids.forEach(x => {
-    if (document.getElementById(x.id).checked) {
-      selected.push(x.name);
-    }
-  });
-
-  return selected;
-}
 
     function setAntiplateletSelection(str) {
       const ids = {
@@ -908,5 +886,6 @@ function getAntiplateletSelection() {
       document.getElementById("op_date").addEventListener("input", formatOpDate);
     });
   </script>
+
 </body>
 </html>
